@@ -1,0 +1,37 @@
+.container{
+    height: 100%;
+    background-color: #1abc9c;
+    color: white;
+    padding-top: 7.5rem;
+    
+}
+.iconContainer::after{
+    position: absolute;
+    content: "";
+    width: 70px;
+    top: 55.3%;
+    right: 52%;
+    height: 4px;
+    background-color: white;
+}
+.iconContainer::before{
+    position: absolute;
+    content: "";
+    width: 70px;
+    top: 55.3%;
+    right: 43.3%;
+    height: 4px;
+    background-color: white;
+}
+.title{
+    font-weight: 700;
+    padding-top: 14%;
+
+}
+.center{
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    width: 78%;
+    margin: auto;
+}

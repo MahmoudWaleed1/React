@@ -1,0 +1,71 @@
+.container{
+    height: 118.5%;
+    color: rgb(44, 62, 80);
+    width: 88%;
+    margin: auto;
+    padding-top: 7.5rem;
+}
+.title{
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.iconContainer::after{
+    position: absolute;
+    content: "";
+    width: 70px;
+    top: 29.3%;
+    right: 52%;
+    height: 4px;
+    background-color: rgb(44, 62, 80);
+}
+.iconContainer::before{
+    position: absolute;
+    content: "";
+    width: 70px;
+    top: 29.3%;
+    right: 43.3%;
+    height: 4px;
+    background-color: rgb(44, 62, 80);
+}
+.item{
+    background-color: #1abc9c;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.item img{
+    transition: .4s;
+}
+.item:hover img{
+    opacity: 0.2;
+}
+.item i {
+    position: absolute;
+    font-size: 6rem;
+    color: white;
+    opacity: 0;
+    transition: .4s;
+    z-index: 2;
+}
+.item:hover i{
+    opacity: 1;
+}
+.lightBox{
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(61, 119, 235, 0.2);
+
+}
+.lightBox img{
+    width: 40%;
+}
+.eventsNone{
+    pointer-events: none;
+}

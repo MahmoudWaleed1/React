@@ -1,4 +1,4 @@
-import { Product, Brand, Category, ApiResponse, Subcategory } from '@/interfaces';
+import { Product, Brand, Category, ApiResponse, Subcategory} from '@/interfaces';
 
 export type ProductsResponse = ApiResponse<Product>;
 export type BrandsResponse = ApiResponse<Brand>;

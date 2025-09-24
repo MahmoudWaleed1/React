@@ -1,4 +1,4 @@
-import { CartResponse } from "@/interfaces";
+import { CartResponse, WishlistResponse } from "@/interfaces";
 import { AddProductToCartResponse, BrandsResponse, CategoriesResponse, SubCategoriesResponse, ProductsResponse, SingleBrandResponse, SingleCategoryResponse, SingleSubCategoryResponse, SingleProductResponse } from "@/types";
 
 
@@ -63,7 +63,7 @@ class ApiService {
             headers: this.#getHeaders()
         }).then(res => res.json())
     }
-    async addProductToWishlist(productId: string): Promise<any> {
+    async addProductToWishlist(productId: string): Promise<WishlistResponse> {
         return await fetch(this.#baseUrl + "api/v1/wishlist", {
             method: 'POST',
             body: JSON.stringify({
@@ -72,14 +72,14 @@ class ApiService {
             headers: this.#getHeaders()
         }).then(res => res.json());
     }
-    async removeFromWishlist(productId: string): Promise<any> {
+    async removeFromWishlist(productId: string): Promise<WishlistResponse> {
         return await fetch(this.#baseUrl + "api/v1/wishlist/" + productId, {
             headers: this.#getHeaders(),
             method: 'delete'
         }).then(res => res.json())
     }
 
-    async getLoggedUserWishlist(): Promise<any> {
+    async getLoggedUserWishlist(): Promise<WishlistResponse> {
         return await fetch(this.#baseUrl + "api/v1/wishlist", {
             headers: this.#getHeaders(),
         }).then(res => res.json());

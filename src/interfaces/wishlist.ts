@@ -1,6 +1,6 @@
 import { Product } from "./product";
 
-export interface WishlistResponse {
+export interface WishlistResponse{
   status: string;
   data: WishlistData;
 }

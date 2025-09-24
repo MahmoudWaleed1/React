@@ -37,9 +37,10 @@ export function CartContainer({ cartData }: CartContainerProps) {
       const newCartData: CartResponse = await apiService.getLoggedUserCart();
       setInnerCartData(newCartData);
     } else {
-      toast.error(response.message, {
-        position: "top-right",
-      });
+      toast.error(response.message ?? "Something went wrong", {
+      position: "top-right",
+          });
+
     }
   }
 
@@ -54,9 +55,10 @@ export function CartContainer({ cartData }: CartContainerProps) {
       const newCartData: CartResponse = await apiService.getLoggedUserCart();
       setInnerCartData(newCartData);
     } else {
-      toast.error(response.message, {
-        position: "top-right",
-      });
+      toast.error(response.message ?? "Something went wrong", {
+      position: "top-right",
+        });
+
     }
   }
 

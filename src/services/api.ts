@@ -91,21 +91,21 @@ class ApiService {
         }).then(res => res.json())
     }
 
-    async removeSpecificCartItem(productId: string): Promise<any> {
+    async removeSpecificCartItem(productId: string): Promise<CartResponse> {
         return await fetch(this.#baseUrl + "api/v1/cart/" + productId, {
             headers: this.#getHeaders(),
             method: 'delete'
         }).then(res => res.json())
     }
 
-    async clearCart(): Promise<any> {
+    async clearCart(): Promise<CartResponse> {
         return await fetch(this.#baseUrl + "api/v1/cart", {
             headers: this.#getHeaders(),
             method: 'delete'
         }).then(res => res.json())
     }
 
-    async updateCartProductCount(productId: string, count: number): Promise<any> {
+    async updateCartProductCount(productId: string, count: number): Promise<CartResponse> {
         return await fetch(this.#baseUrl + "api/v1/cart/" + productId, {
             method: 'put',
             body: JSON.stringify({

@@ -1,0 +1,25 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'ecommerce.routemisr.com',
+        pathname: '/Route-Academy-products/**',
+        protocol: 'https'
+      },
+      {
+        hostname: 'ecommerce.routemisr.com',
+        pathname: '/Route-Academy-categories/**',
+        protocol: 'https'
+      },
+      {
+        hostname: 'ecommerce.routemisr.com',
+        pathname: '/Route-Academy-brands/**',
+        protocol: 'https'
+      },
+    ]
+  }
+};
+
+export default nextConfig;

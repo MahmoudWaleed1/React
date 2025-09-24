@@ -6,6 +6,7 @@ export interface CartResponse {
   numOfCartItems: number;
   cartId: string;
   data: CartData;
+  message?: string; 
 }
 
 interface CartData {

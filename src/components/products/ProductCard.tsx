@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/interfaces";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Heart, Loader2 } from "lucide-react";
 import { renderStars } from "@/helpers/rating";
 import { formatPrice } from "@/helpers/currency";
 import { AddToCartBtn } from "@/components";
@@ -12,6 +12,7 @@ import { useContext, useState } from "react";
 import { apiService } from "@/services/api";
 import toast from "react-hot-toast";
 import { cartContext } from "@/contexts/cartContext";
+import { useWishlist } from "@/contexts/wishlistContext";
 
 interface ProductCardProps {
   product: Product;
@@ -21,6 +22,10 @@ interface ProductCardProps {
 export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   const { setCartCount } = useContext(cartContext);
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+
+  const isWishlisted = isInWishlist(product._id);
 
   async function handleAddProductToCart() {
     setAddToCartLoading(true);
@@ -33,6 +38,35 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
       position: "bottom-right",
     });
   }
+
+  const handleWishlistToggle = async () => {
+    setWishlistLoading(true);
+    try {
+      if (isWishlisted) {
+        await removeFromWishlist(product._id);
+      } else {
+        await addToWishlist(product);
+      }
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
+  const HeartButton = ({ size = "sm", className = "" }: { size?: "sm" | "icon"; className?: string }) => (
+    <Button
+      variant="ghost"
+      size={size}
+      onClick={handleWishlistToggle}
+      disabled={wishlistLoading}
+      className={className}
+    >
+      {wishlistLoading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Heart className={`h-4 w-4 ${isWishlisted ? "fill-current text-red-500" : ""}`} />
+      )}
+    </Button>
+  );
 
   if (viewMode === "list") {
     return (
@@ -57,9 +91,7 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
                 {product.title}
               </Link>
             </h3>
-            <Button variant="ghost" size="sm">
-              <Heart className="h-4 w-4" />
-            </Button>
+            <HeartButton />
           </div>
 
           <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
@@ -106,10 +138,10 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
               </div>
             </div>
 
-            <Button>
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
-            </Button>
+            <AddToCartBtn
+              addToCartLoading={addToCartLoading}
+              handleAddProductToCart={handleAddProductToCart}
+            />
           </div>
         </div>
       </div>
@@ -129,13 +161,9 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
         />
 
         {/* Wishlist Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white"
-        >
-          <Heart className="h-4 w-4" />
-        </Button>
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <HeartButton className="bg-white/80 hover:bg-white" />
+        </div>
 
         {/* Badge for sold items */}
         {product.sold > 100 && (
@@ -190,11 +218,6 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Add to Cart Button */}
-        {/* <Button className="w-full" size="sm">
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          Add to Cart
-        </Button> */}
         <AddToCartBtn
           addToCartLoading={addToCartLoading}
           handleAddProductToCart={handleAddProductToCart}

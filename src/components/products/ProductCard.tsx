@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/interfaces";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart, Loader2 } from "lucide-react";
+import { Heart, Loader2 } from "lucide-react";
 import { renderStars } from "@/helpers/rating";
 import { formatPrice } from "@/helpers/currency";
 import { AddToCartBtn } from "@/components";
@@ -30,27 +30,14 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
   async function handleAddProductToCart() {
     setAddToCartLoading(true);
     const data = await apiService.addProductToCart(product?.id ?? "");
-    console.log(data);
+    console.log(data); 
     setCartCount(data.numOfCartItems);
     setAddToCartLoading(false);
-    toast("Product added successfully to ur cart", {
+    toast("Product added successfully to yout cart", { 
       icon: "✅",
       position: "bottom-right",
     });
   }
-
-  const handleWishlistToggle = async () => {
-    setWishlistLoading(true);
-    try {
-      if (isWishlisted) {
-        await removeFromWishlist(product._id);
-      } else {
-        await addToWishlist(product);
-      }
-    } finally {
-      setWishlistLoading(false);
-    }
-  };
 
   const HeartButton = ({ size = "sm", className = "" }: { size?: "sm" | "icon"; className?: string }) => (
     <Button
@@ -67,6 +54,19 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
       )}
     </Button>
   );
+
+  const handleWishlistToggle = async () => {
+    setWishlistLoading(true);
+    try {
+      if (isWishlisted) {
+        await removeFromWishlist(product._id);
+      } else {
+        await addToWishlist(product);
+      }
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
 
   if (viewMode === "list") {
     return (
@@ -105,7 +105,6 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
                 ({product.ratingsQuantity})
               </span>
             </div>
-
             <span className="text-sm text-muted-foreground">
               {product.sold} sold
             </span>
@@ -148,9 +147,11 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
     );
   }
 
+  // Default grid view
   return (
     <div className="group relative bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300">
-      {/* Product Image */}
+      
+      {/* Image container */}
       <div className="relative aspect-square overflow-hidden">
         <Image
           src={product.imageCover}
@@ -160,12 +161,12 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
         />
 
-        {/* Wishlist Button */}
+        {/* Wishlist button */}
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <HeartButton className="bg-white/80 hover:bg-white" />
         </div>
 
-        {/* Badge for sold items */}
+        {/* Popular badge */}
         {product.sold > 100 && (
           <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
             Popular
@@ -173,9 +174,8 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
         )}
       </div>
 
-      {/* Product Info */}
+      {/* Product details */}
       <div className="p-4">
-        {/* Brand */}
         <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">
           <Link
             href={``}
@@ -185,12 +185,10 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
           </Link>
         </p>
 
-        {/* Title */}
         <h3 className="font-semibold text-sm mb-2 line-clamp-2 hover:text-primary transition-colors">
           <Link href={`/products/${product._id}`}>{product.title}</Link>
         </h3>
 
-        {/* Rating */}
         <div className="flex items-center gap-1 mb-2">
           <div className="flex">{renderStars(product.ratingsAverage)}</div>
           <span className="text-xs text-muted-foreground">
@@ -198,7 +196,6 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Category */}
         <p className="text-xs text-muted-foreground mb-2">
           <Link
             href={``}
@@ -208,7 +205,6 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
           </Link>
         </p>
 
-        {/* Price */}
         <div className="flex items-center justify-between mb-3">
           <span className="text-lg font-bold text-primary">
             {formatPrice(product.price)}

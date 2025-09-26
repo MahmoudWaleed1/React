@@ -1,9 +1,11 @@
-import { Product, Brand, Category, ApiResponse, Subcategory} from '@/interfaces';
+import { Product, Brand, Category, ApiResponse, Subcategory, Address, Order} from '@/interfaces';
 
 export type ProductsResponse = ApiResponse<Product>;
 export type BrandsResponse = ApiResponse<Brand>;
 export type CategoriesResponse = ApiResponse<Category>;
 export type SubCategoriesResponse = ApiResponse<Subcategory>;
+export type AddressResponse = ApiResponse<Address>;
+export type OrdersResponse = ApiResponse<Order>;
 
 // Single item responses
 export type SingleBrandResponse = {
@@ -21,6 +23,11 @@ export type SingleSubCategoryResponse = {
 export type SingleProductResponse = {
   data: Product;
 }
+
+export type SingleAddressResponse = {
+  data: Address;
+}
+
 
 export type AddProductToCartResponse =
   {

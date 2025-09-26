@@ -1,5 +1,5 @@
 import { CartResponse, WishlistResponse } from "@/interfaces";
-import { AddProductToCartResponse, BrandsResponse, CategoriesResponse, SubCategoriesResponse, ProductsResponse, SingleBrandResponse, SingleCategoryResponse, SingleSubCategoryResponse, SingleProductResponse } from "@/types";
+import { AddProductToCartResponse, BrandsResponse, CategoriesResponse, SubCategoriesResponse, AddressResponse, ProductsResponse, OrdersResponse, SingleBrandResponse, SingleCategoryResponse, SingleSubCategoryResponse, SingleProductResponse, SingleAddressResponse } from "@/types";
 
 
 class ApiService {
@@ -114,6 +114,48 @@ class ApiService {
             headers: this.#getHeaders()
         }).then(res => res.json())
     }
+
+    async checkout(cartId: string, shippingAddress: { details: string; phone: string; city: string }) {
+        return await fetch(this.#baseUrl + "api/v1/orders/checkout-session/" + cartId + "?url=http://localhost:3000", {
+            method: 'POST',
+            body: JSON.stringify({
+                "shippingAddress": { ...shippingAddress }
+            }),
+            headers: this.#getHeaders()
+        }).then(res => res.json())
+    }
+
+    async addAddress(addressData: { name: string; details: string; phone: string; city: string }): Promise<AddressResponse> {
+            return await fetch(this.#baseUrl + "api/v1/addresses", {
+                method: 'POST',
+                body: JSON.stringify(addressData),
+                headers: this.#getHeaders()
+            }).then(res => res.json())
+}
+
+    async removeAddress(userId: string): Promise<AddressResponse> {
+        return await fetch(this.#baseUrl + "api/v1/addresses/" + userId, {
+            headers: this.#getHeaders(),
+            method: 'delete'
+        }).then(res => res.json())
+    }
+
+    async getSpecificAddress(userId: string): Promise<SingleAddressResponse> {
+        return await fetch(this.#baseUrl + "api/v1/addresses/" + userId).then((res) => res.json());
+    }
+
+    async getLoggedUserAddresses(): Promise<AddressResponse> {
+        return await fetch(this.#baseUrl + "api/v1/addresses").then((res) => res.json());
+    }
+
+    async getAllOrders(): Promise<OrdersResponse> {
+        return await fetch(this.#baseUrl + "api/v1/orders").then((res) => res.json());
+    }
+
+    async getUserOrders(userId: string): Promise<OrdersResponse> {
+        return await fetch(this.#baseUrl + "api/v1/orders/user/" + userId).then((res) => res.json());
+    }
+
 
 }
 

@@ -1,4 +1,3 @@
-// app/wishlist/page.tsx
 "use client";
 import React, { useState } from "react"; 
 import { useWishlist } from "@/contexts/wishlistContext";

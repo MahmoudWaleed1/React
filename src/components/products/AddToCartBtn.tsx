@@ -13,15 +13,17 @@ export function AddToCartBtn({
 }: AddToCartBtnProps) {
     
   return (
-    <Button
-      size="lg"
-      className="flex-1 w-full"
-      onClick={handleAddProductToCart}
-      disabled={addToCartLoading}
-    >
-      {addToCartLoading && <Loader2 className="animate-spin" />}
-      <ShoppingCart className="h-5 w-5 mr-2" />
-      Add to Cart
-    </Button>
+      <div className="flex justify-center">
+      <Button
+        size="lg"
+        className="w-full"
+        onClick={handleAddProductToCart}
+        disabled={addToCartLoading}
+      >
+        {addToCartLoading && <Loader2 className="animate-spin" />}
+        <ShoppingCart className="h-5 w-5 mr-2" />
+        Add to Cart
+      </Button>
+    </div>
   );
 }

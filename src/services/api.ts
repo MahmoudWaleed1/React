@@ -156,6 +156,16 @@ class ApiService {
         return await fetch(this.#baseUrl + "api/v1/orders/user/" + userId).then((res) => res.json());
     }
 
+    async login(email: string, password: string) {
+        return await fetch(this.#baseUrl + "api/v1/auth/signin", {
+            method: 'POST',
+            body: JSON.stringify({
+                email,
+                password
+            }),
+            headers: this.#getHeaders()
+        }).then(res => res.json());
+    }
 
 }
 

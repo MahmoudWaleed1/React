@@ -1,16 +1,38 @@
 import { CartResponse, WishlistResponse } from "@/interfaces";
 import { AddProductToCartResponse, BrandsResponse, CategoriesResponse, SubCategoriesResponse, AddressResponse, ProductsResponse, OrdersResponse, SingleBrandResponse, SingleCategoryResponse, SingleSubCategoryResponse, SingleProductResponse, SingleAddressResponse } from "@/types";
+import { getSession } from "next-auth/react";
 
 
 class ApiService {
     #baseUrl: string = "https://ecommerce.routemisr.com/";
 
 
-    #getHeaders() {
-        return {
-            "Content-Type": "application/json",
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YWYxMjJmZmUxZDBkYWEzOGQxNDhmZCIsIm5hbWUiOiJNb2hhbWVkIEFiZCBFbCBNb2F0eSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU2MzAzOTQzLCJleHAiOjE3NjQwNzk5NDN9.NckDzfKxU4EVmLKHg2GYR2lklfuKhAgEBKSr_b7VJ_U"
+    async #getHeaders() {
+    let token = "";
+
+    // Client-side: use getSession from next-auth/react
+    if (typeof window !== "undefined") {
+        try {
+        const session = await getSession();
+        token = session?.user?.token ?? "";   // <-- fix: use session.user.token
+        console.log("🚀 ~ APIService ~ Client-side session:", session);
+        } catch {
+        console.log("Client-side session not available");
         }
+    } else {
+        // Server-side: existing logic (keep your getToken code)
+        // ...
+    }
+
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+    };
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`; // standard header
+        headers["token"] = token;                     // keep original header for compatibility
+    }
+
+    return headers;
     }
 
     async getAllProducts(): Promise<ProductsResponse> {
@@ -55,97 +77,114 @@ class ApiService {
     }
 
     async addProductToCart(productId: string): Promise<AddProductToCartResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/cart", {
             method: 'POST',
             body: JSON.stringify({
                 productId
             }),
-            headers: this.#getHeaders()
+            headers: headers
         }).then(res => res.json())
     }
     async addProductToWishlist(productId: string): Promise<WishlistResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/wishlist", {
             method: 'POST',
             body: JSON.stringify({
                 productId
-            }),
-            headers: this.#getHeaders()
+            }),    
+            headers: headers
         }).then(res => res.json());
     }
     async removeFromWishlist(productId: string): Promise<WishlistResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/wishlist/" + productId, {
-            headers: this.#getHeaders(),
+            headers: headers,
             method: 'delete'
         }).then(res => res.json())
     }
 
     async getLoggedUserWishlist(): Promise<WishlistResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/wishlist", {
-            headers: this.#getHeaders(),
+            headers: headers,
         }).then(res => res.json());
     }
 
     async getLoggedUserCart(): Promise<CartResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/cart", {
-            headers: this.#getHeaders()
+            headers: headers
         }).then(res => res.json())
     }
 
     async removeSpecificCartItem(productId: string): Promise<CartResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/cart/" + productId, {
-            headers: this.#getHeaders(),
+            headers: headers,
             method: 'delete'
         }).then(res => res.json())
     }
 
     async clearCart(): Promise<CartResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/cart", {
-            headers: this.#getHeaders(),
+            headers: headers,
             method: 'delete'
         }).then(res => res.json())
     }
 
     async updateCartProductCount(productId: string, count: number): Promise<CartResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/cart/" + productId, {
             method: 'put',
             body: JSON.stringify({
                 count
             }),
-            headers: this.#getHeaders()
+            headers: headers
         }).then(res => res.json())
     }
 
     async checkout(cartId: string, shippingAddress: { details: string; phone: string; city: string }) {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/orders/checkout-session/" + cartId + "?url=http://localhost:3000", {
             method: 'POST',
             body: JSON.stringify({
                 "shippingAddress": { ...shippingAddress }
             }),
-            headers: this.#getHeaders()
+            headers: headers
         }).then(res => res.json())
     }
 
     async addAddress(addressData: { name: string; details: string; phone: string; city: string }): Promise<AddressResponse> {
+        const headers = await this.#getHeaders()
             return await fetch(this.#baseUrl + "api/v1/addresses", {
                 method: 'POST',
                 body: JSON.stringify(addressData),
-                headers: this.#getHeaders()
+                headers: headers
             }).then(res => res.json())
 }
 
     async removeAddress(userId: string): Promise<AddressResponse> {
+        const headers = await this.#getHeaders()
         return await fetch(this.#baseUrl + "api/v1/addresses/" + userId, {
-            headers: this.#getHeaders(),
+            headers: headers,
             method: 'delete'
         }).then(res => res.json())
     }
 
     async getSpecificAddress(userId: string): Promise<SingleAddressResponse> {
-        return await fetch(this.#baseUrl + "api/v1/addresses/" + userId).then((res) => res.json());
+        const headers = await this.#getHeaders();
+        return await fetch(this.#baseUrl + "api/v1/addresses/" + userId, {
+            headers: headers
+        }).then((res) => res.json());
     }
 
     async getLoggedUserAddresses(): Promise<AddressResponse> {
-        return await fetch(this.#baseUrl + "api/v1/addresses").then((res) => res.json());
+        const headers = await this.#getHeaders();
+        return await fetch(this.#baseUrl + "api/v1/addresses", {
+            headers: headers
+        }).then((res) => res.json());
     }
 
     async getAllOrders(): Promise<OrdersResponse> {
@@ -156,16 +195,40 @@ class ApiService {
         return await fetch(this.#baseUrl + "api/v1/orders/user/" + userId).then((res) => res.json());
     }
 
-    async login(email: string, password: string) {
-        return await fetch(this.#baseUrl + "api/v1/auth/signin", {
-            method: 'POST',
-            body: JSON.stringify({
-                email,
-                password
-            }),
-            headers: this.#getHeaders()
-        }).then(res => res.json());
-    }
+async login(email: string, password: string) {
+  console.log("➡️ login() called with", email, password);
+
+  return await fetch(this.#baseUrl + "api/v1/auth/signin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password }),
+  }).then(async res => {
+    const data = await res.json().catch(() => ({}));
+    console.log("⬅️ Login status:", res.status, "Response:", data);
+    return { status: res.status, ...data };
+  });
+}
+
+
+
+async signup(name: string, email: string, password: string, rePassword: string, phone: string) {
+  return await fetch(this.#baseUrl + "api/v1/auth/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name,
+      email,
+      password,
+      rePassword,
+      phone
+    }),
+  }).then(res => res.json());
+}
+
 
 }
 

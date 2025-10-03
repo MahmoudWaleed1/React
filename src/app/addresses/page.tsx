@@ -1,42 +1,27 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Plus, Home, Trash2, Loader2 } from "lucide-react";
+import { Button, LoadingSpinner } from "@/components";
+import { Plus, Home, Trash2, Check, Loader2 } from "lucide-react";
 import { apiService } from "@/services/api";
 import toast from "react-hot-toast";
 import Link from "next/link";
-
-interface Address {
-  _id: string;
-  name: string;
-  details: string;
-  phone: string;
-  city: string;
-}
+import { Address } from "@/interfaces/address";
 
 export default function AddressesPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadAddresses();
-  }, []);
+  const [selectingId, setSelectingId] = useState<string | null>(null);
 
   async function loadAddresses() {
     try {
       setLoading(true);
       const response = await apiService.getLoggedUserAddresses();
-      console.log("Addresses page response:", response); // Debug log
-      
-      // Fix: Properly handle the response structure
-      if (response && response.data && Array.isArray(response.data)) {
+      if (response?.data && Array.isArray(response.data)) {
         setAddresses(response.data);
       } else if (Array.isArray(response)) {
-        // If the API returns the array directly
         setAddresses(response);
       } else {
-        console.error("Unexpected response format:", response);
         setAddresses([]);
       }
     } catch (error) {
@@ -48,30 +33,49 @@ export default function AddressesPage() {
     }
   }
 
-  async function handleDeleteAddress(addressId: string) {
-    if (!confirm("Are you sure you want to delete this address?")) return;
+  useEffect(() => {
+    loadAddresses();
+  }, []);
 
+  async function handleDeleteAddress(addressId: string) {
     try {
       setDeletingId(addressId);
       await apiService.removeAddress(addressId);
       toast.success("Address deleted");
-      // Reload the addresses list
       await loadAddresses();
-    } catch (error) {
-      console.error("Delete address error:", error);
+    } catch {
       toast.error("Failed to delete address");
     } finally {
       setDeletingId(null);
     }
   }
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-        <p>Loading addresses...</p>
-      </div>
-    );
+  //  Checkout after selecting address
+  async function handleSelectAddress(address: Address) {
+    try {
+      setSelectingId(address._id);
+      localStorage.setItem("selectedAddress", JSON.stringify(address));
+
+      // 🔑 Get cart before checkout
+      const cart = await apiService.getLoggedUserCart();
+      if (!cart || !cart.data?._id) {
+        toast.error("Cart is empty or invalid");
+        return;
+      }
+
+      // 🔑 Checkout with the selected address
+      const data = await apiService.checkout(cart.data._id, address);
+
+      if (data.session?.url) {
+        window.location.href = data.session.url;
+      } else {
+        toast.error("Failed to start checkout session");
+      }
+    } catch (err) {
+      toast.error("Checkout failed");
+    } finally {
+      setSelectingId(null);
+    }
   }
 
   return (
@@ -86,7 +90,11 @@ export default function AddressesPage() {
         </Button>
       </div>
 
-      {addresses.length === 0 ? (
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <LoadingSpinner />
+        </div>
+      ) : addresses.length === 0 ? (
         <div className="text-center py-12">
           <Home className="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-600 mb-4">No addresses yet</p>
@@ -98,7 +106,7 @@ export default function AddressesPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {addresses.map((address) => (
             <div key={address._id} className="border rounded-lg p-4 relative">
-              <button 
+              <button
                 onClick={() => handleDeleteAddress(address._id)}
                 disabled={deletingId === address._id}
                 className="absolute top-4 right-4 text-red-500 hover:text-red-700 disabled:opacity-50"
@@ -109,11 +117,24 @@ export default function AddressesPage() {
                   <Trash2 className="h-4 w-4" />
                 )}
               </button>
-              
+
               <h3 className="font-semibold text-lg mb-2">{address.name}</h3>
               <p className="text-gray-600 text-sm mb-1">{address.details}</p>
               <p className="text-gray-600 text-sm mb-1">{address.city}</p>
               <p className="text-gray-600 text-sm">{address.phone}</p>
+
+              <Button
+                className="mt-4 w-full"
+                onClick={() => handleSelectAddress(address)}
+                disabled={selectingId === address._id}
+              >
+                {selectingId === address._id ? (
+                  <LoadingSpinner />
+                ) : (
+                  <Check className="h-4 w-4 mr-2" />
+                )}
+                Deliver to this address
+              </Button>
             </div>
           ))}
         </div>

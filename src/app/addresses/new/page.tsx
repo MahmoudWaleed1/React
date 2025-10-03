@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { apiService } from "@/services/api";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Address } from "@/interfaces/address";
+
+type NewAddress = Omit<Address, "_id" | "createdAt" | "updatedAt">;
 
 export default function NewAddressPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  
-  const [formData, setFormData] = useState({
+
+  const [formData, setFormData] = useState<NewAddress>({
     name: "",
     details: "",
     phone: "",
@@ -26,14 +29,7 @@ export default function NewAddressPage() {
     try {
       await apiService.addAddress(formData);
       toast.success("Address added successfully!");
-      
-      // Use redirect instead of router.push for better reliability
       router.push("/addresses");
-      // Force a hard refresh to ensure data is loaded
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
-      
     } catch (error) {
       console.error("Add address error:", error);
       toast.error("Failed to add address");
@@ -116,19 +112,10 @@ export default function NewAddressPage() {
         </div>
 
         <div className="flex gap-3 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1"
-            asChild
-          >
+          <Button type="button" variant="outline" className="flex-1" asChild>
             <Link href="/addresses">Cancel</Link>
           </Button>
-          <Button
-            type="submit"
-            disabled={loading}
-            className="flex-1"
-          >
+          <Button type="submit" disabled={loading} className="flex-1">
             {loading ? "Adding..." : "Add Address"}
           </Button>
         </div>

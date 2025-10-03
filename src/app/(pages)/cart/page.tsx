@@ -1,19 +1,10 @@
-import { CartResponse } from "@/interfaces";
-import { apiService } from "@/services/api";
 import React from "react";
-import { CartContainer } from "./CartContainer";
+import { CartContainer } from "@/app/(pages)/cart/CartContainer"; // adjust import path
 
-export default async function Cart() {
-  async function fetchCartProducts(): Promise<CartResponse> {
-    const response = await apiService.getLoggedUserCart();
-    return response;
-  }
-
-  const cartData: CartResponse = await fetchCartProducts();
-
+export default function CartPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <CartContainer cartData={cartData} />
+      <CartContainer />
     </div>
   );
 }

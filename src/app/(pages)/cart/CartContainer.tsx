@@ -7,6 +7,7 @@ import { apiService } from "@/services/api";
 import { Separator } from "@radix-ui/react-separator";
 import { Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -14,7 +15,9 @@ export function CartContainer() {
   const [innerCartData, setInnerCartData] = useState<CartResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [isClearingCart, setIsClearingCart] = useState(false);
+  const [isProceedingToCheckout, setIsProceedingToCheckout] = useState(false);
   const { setCartCount } = useContext(cartContext);
+  const router = useRouter();
 
   // 🔑 fetch cart on mount
   useEffect(() => {
@@ -68,7 +71,13 @@ export function CartContainer() {
     }
   }
 
-  //  Loading state
+  const handleProceedToCheckout = () => {
+    setIsProceedingToCheckout(true);
+    // Use router.push for controlled navigation
+    router.push("/addresses");
+  };
+
+  // Loading state
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
@@ -152,13 +161,20 @@ export function CartContainer() {
               <span>{formatPrice(innerCartData.data.totalCartPrice)}</span>
             </div>
             
-            <Button asChild className="w-full" size="lg">
-              <Link
-                href="/addresses"
-                className="flex items-center justify-center gap-2"
-              >
-                Proceed to Checkout
-              </Link>
+            <Button 
+              onClick={handleProceedToCheckout}
+              disabled={isProceedingToCheckout}
+              className="w-full" 
+              size="lg"
+            >
+              {isProceedingToCheckout ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Proceed to Checkout
+                </>
+              ) : (
+                'Proceed to Checkout'
+              )}
             </Button>
 
             <Button variant="outline" className="w-full mt-2" asChild>

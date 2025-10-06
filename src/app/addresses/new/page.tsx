@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { apiService } from "@/services/api";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -116,7 +116,14 @@ export default function NewAddressPage() {
             <Link href="/addresses">Cancel</Link>
           </Button>
           <Button type="submit" disabled={loading} className="flex-1">
-            {loading ? "Adding..." : "Add Address"}
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Adding...
+              </>
+            ) : (
+              "Add Address"
+            )}
           </Button>
         </div>
       </form>

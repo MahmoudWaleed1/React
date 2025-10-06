@@ -19,6 +19,34 @@ interface ProductCardProps {
   viewMode?: "grid" | "list";
 }
 
+// Helper function to format sold count
+function formatSoldCount(sold: any): string {
+  // Handle string values
+  if (typeof sold === 'string') {
+    // Check for scientific notation or corrupted strings
+    if (sold.includes('e+') || sold.includes('e') || sold.length > 15) {
+      return "99999+";
+    }
+    const parsed = parseFloat(sold);
+    return formatSoldCount(parsed); // Recursive call with number
+  }
+  
+  // Handle number values
+  if (typeof sold === 'number') {
+    if (sold < 0 || sold > 1000000 || !isFinite(sold) || isNaN(sold)) {
+      return "99999+";
+    }
+  
+    const stringRep = sold.toString();
+    if (stringRep.includes('e')) {
+      return "99999+";
+    }
+    return Math.round(sold).toString();
+  }
+
+  return "99999+";
+}
+
 export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   const { setCartCount } = useContext(cartContext);
@@ -106,7 +134,7 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
               </span>
             </div>
             <span className="text-sm text-muted-foreground">
-              {product.sold} sold
+              {formatSoldCount(product.sold)} sold
             </span>
           </div>
 
@@ -185,7 +213,7 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
           </Link>
         </p>
 
-        <h3 className="font-semibold text-sm mb-2 line-clamp-2 hover:text-primary transition-colors">
+        <h3 className="font-semibold text-sm mb-2 h-6 line-clamp-2 hover:text-primary transition-colors">
           <Link href={`/products/${product._id}`}>{product.title}</Link>
         </h3>
 
@@ -210,7 +238,7 @@ export function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
             {formatPrice(product.price)}
           </span>
           <span className="text-xs text-muted-foreground">
-            {product.sold} sold
+            {formatSoldCount(product.sold)} sold
           </span>
         </div>
 

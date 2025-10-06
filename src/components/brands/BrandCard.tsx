@@ -40,6 +40,7 @@ export function BrandCard({ brand }: BrandCardProps) {
     setBrandDetails(null);
     setError(null);
   };
+  
 
   return (
     <>

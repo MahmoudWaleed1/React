@@ -41,8 +41,8 @@ export default function InnerPage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">Products</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold mb-4 text-center">Products</h1>
+        <p className="text-muted-foreground text-center">
           Discover amazing products from our collection
         </p>
       </div>

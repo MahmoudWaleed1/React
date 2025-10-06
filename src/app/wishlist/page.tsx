@@ -38,7 +38,7 @@ export default function WishlistPage() {
 
       {wishlist.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 text-lg">Your wishlist is empty. Start adding some products!</p>
+          <p className="text-gray-600 text-lg mb-36 mr-20">Your wishlist is empty. Start adding some products!</p>
         </div>
       ) : (
         <div

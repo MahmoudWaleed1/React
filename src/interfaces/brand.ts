@@ -6,3 +6,4 @@ export interface Brand {
   createdAt?: string;
   updatedAt?: string;
 }
+

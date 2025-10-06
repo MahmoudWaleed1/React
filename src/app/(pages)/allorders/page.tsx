@@ -6,7 +6,7 @@ import { OrdersResponse } from "@/types";
 import { Button, LoadingSpinner } from "@/components";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { Order } from "@/interfaces/orders";
+import { Order } from "@/interfaces/order";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function AllOrders() {
@@ -110,7 +110,7 @@ export default function AllOrders() {
                           className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm"
                         >
                           <div className="flex items-center gap-4">
-                            {item.product.imageCover && (
+                            {typeof item.product === "object" && item.product.imageCover && (
                               <img
                                 src={item.product.imageCover}
                                 alt={item.product.title}

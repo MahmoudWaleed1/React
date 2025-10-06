@@ -229,7 +229,55 @@ async signup(name: string, email: string, password: string, rePassword: string, 
   }).then(res => res.json());
 }
 
+async resetPassword(email: string) {
+  return await fetch(this.#baseUrl + "api/v1/auth/forgotPasswords", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email }),
+  }).then(res => res.json());
 
+}
+
+async verifyPassword(email: string, code: string, newPassword: string) {
+  return await fetch(this.#baseUrl + "api/v1/auth/verifyResetCode", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, code, newPassword }),
+  }).then(res => res.json());
+
+}
+
+async updateUserPassword(currentPassword: string, newPassword: string) {
+  const headers = await this.#getHeaders()
+  return await fetch(this.#baseUrl + "api/v1/auth/users/changeMyPassword", {
+    method: "PUT",
+    headers: headers,
+    body: JSON.stringify({ currentPassword, newPassword }),
+  }).then(res => res.json());
+}
+
+async updateUserData(email: string) {
+  const headers = await this.#getHeaders()
+  return await fetch(this.#baseUrl + "api/v1/auth/users/updateMe", {
+    method: "PUT",
+    headers: headers,
+    body: JSON.stringify({ email }),
+  }).then(res => res.json());
+}
+
+async verifyToken(token: string) { 
+    return await fetch(this.#baseUrl + "api/v1/auth/users/verifyToken", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ token }),
+    }).then(res => res.json());
+}
 }
 
 export const apiService = new ApiService()

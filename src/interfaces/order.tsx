@@ -4,6 +4,7 @@ export interface Order {
   totalOrderPrice: number;
   cartItems: {
     product: {
+      sold(sold: any): import("react").ReactNode;
       _id: string;
       title: string;
       imageCover: string;
